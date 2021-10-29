@@ -24,4 +24,4 @@ async def create_account(request: AccNew, db: Session = Depends(get_db), _: User
 
 @router.get('/', response_model=list[AccDisplay])
 async def get_all_accounts(db: Session = Depends(get_db), _: UserBase = Depends(get_current_user)):
-    return db.query(DbAccount).all()
+    return db.query(DbAccount).order_by("code").all()

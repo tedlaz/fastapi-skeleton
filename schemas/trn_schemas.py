@@ -15,7 +15,7 @@ class TrnNew(BaseModel):
 
 
 class TrndDisplay(BaseModel):
-    # id: int
+    id: int
     account: str
     val: float
 
@@ -24,6 +24,7 @@ class TrndDisplay(BaseModel):
 
 
 class TrnDisplay(BaseModel):
+    id: int
     date: date
     seira: str
     pno: str

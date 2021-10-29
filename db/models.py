@@ -1,9 +1,9 @@
-from enum import unique
-from sqlalchemy import Column, ForeignKey, PrimaryKeyConstraint, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, UniqueConstraint
 from sqlalchemy.sql.sqltypes import Integer, String, Date, Numeric
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-
+from sqlalchemy import event, DDL
+from initial_data.sql_create import acc_sql
 
 Base = declarative_base()
 
@@ -44,6 +44,9 @@ class DbTrnd(Base):
     id = Column(Integer, primary_key=True, index=True)
     tran_id = Column(Integer, ForeignKey('trn.id'))
     account = Column(String)
-    val = Column(Numeric)
+    val = Column(Numeric(12, 2))
 
     tran = relationship('DbTrn', back_populates='lines')
+
+
+event.listen(DbAccount.__table__, 'after_create', DDL(acc_sql()))
