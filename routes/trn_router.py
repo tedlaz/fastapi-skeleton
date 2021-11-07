@@ -6,6 +6,7 @@ from auth.oauth2 import get_current_user
 from auth.user_schemas import UserBase
 from schemas.trn_schemas import TrnNew, TrnDisplay
 from db_session import get_db
+from db import crud_trn
 
 
 def check_lines_and_raise_exceptions(lines):
@@ -29,27 +30,10 @@ router = APIRouter(prefix='/trn', tags=['trn'])
 
 @router.post('/', response_model=TrnDisplay)
 async def create_trn(request: TrnNew, db: Session = Depends(get_db), _: UserBase = Depends(get_current_user)):
-    check_lines_and_raise_exceptions(request.lines)
-    new_trn = DbTrn(
-        date=request.date,
-        seira=request.seira,
-        pno=request.pno
-    )
-
-    for line in request.lines:
-        new_trn.lines.append(DbTrnd(
-            account=line.account,
-            val=round(line.val, 2)
-        ))
-
     try:
-        db.add(new_trn)
-        db.commit()
-        db.refresh(new_trn)
-    except IntegrityError:
-        raise HTTPException(
-            status_code=404, detail="Transaction already exists")
-    return new_trn
+        return crud_trn.create(request, db)
+    except Exception as err:
+        raise HTTPException(status_code=404, detail=err)
 
 
 @router.get('/', response_model=list[TrnDisplay])

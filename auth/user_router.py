@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from auth.user_model import DbUser
-from auth.hash import Hash
+from auth import hash
 from auth.user_schemas import UserBase, UserDisplay
 from db_session import get_db
 
@@ -15,7 +15,7 @@ def create_user(request: UserBase, db: Session = Depends(get_db)):
     new_user = DbUser(
         username=request.username,
         email=request.email,
-        password=Hash.encrypt(request.password)
+        password=hash.encrypt(request.password)
     )
     db.add(new_user)
     db.commit()
@@ -39,7 +39,7 @@ def update_user(id: int, request: UserBase, db: Session = Depends(get_db)):
     user.update({
         DbUser.username: request.username,
         DbUser.email: request.email,
-        DbUser.password: Hash.encrypt(request.password)
+        DbUser.password: hash.encrypt(request.password)
     })
     db.commit()
     return user.first()

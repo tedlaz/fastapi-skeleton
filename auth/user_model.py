@@ -2,7 +2,7 @@ from sqlalchemy import Column
 from sqlalchemy.sql.sqltypes import Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import event, DDL
-from auth.hash import Hash
+from auth import hash
 
 Base = declarative_base()
 
@@ -21,7 +21,7 @@ event.listen(
     DDL(
         (
             "INSERT INTO users (id, username, email, password) VALUES"
-            f" (1, 'ted', 'ted@gmail.com', '{Hash.encrypt('123')}')"
+            f" (1, 'ted', 'ted@gmail.com', '{hash.encrypt('123')}')"
         )
     )
 )
